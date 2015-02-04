@@ -1,0 +1,22 @@
+{% if errors %}{{errors}}{%endif%}
+
+
+
+
+
+
+
+
+
+<form method=post action="/register">
+  <dl>
+  	<lable>Enter your message</lable>
+    {{ form.message }}
+    <br>
+    <lable>Enter your email</lable>
+    {{form.email}}
+    {{form.fb_id(class_="text_blob")}}
+    <br>
+    {{form.submit}}
+  </dl>
+</form>
