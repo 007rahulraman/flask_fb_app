@@ -1,5 +1,6 @@
 import re
-from flask import Flask, render_template, request, redirect, url_for, abort, session
+import requests, json, random, string
+from flask import Flask, render_template, request, redirect, url_for, abort, session, json, jsonify 
 from flask.ext.wtf import Form
 from wtforms import Form, BooleanField, TextField, PasswordField, validators, StringField, SubmitField, HiddenField
 from wtforms.validators import Required
@@ -25,12 +26,25 @@ class MessageForm(Form):
     fb_id = HiddenField('Facebook Id')
     submit = SubmitField('Submit')
 
+SIMPLE_CHARS = string.ascii_letters + string.digits
+
+def get_random_string(length=8):
+    return ''.join(random.choice(SIMPLE_CHARS) for i in xrange(length))
 
 def is_email_address_valid(email):
     """Validate the email address using a regex."""
     if not re.match("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$", email):
         return False
     return True
+
+def send_email(to, subject, template):
+    msg = Message(
+        subject,
+        recipients=[to],
+        html=template,
+        sender='rahulraman.abes@gmail.com'
+    )
+    mail.send(msg)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -48,13 +62,19 @@ def register():
 		if not is_email_address_valid(email_data):
  			return render_template("register.html", errors = 'Kindly enter a valid email',form=form)
 		else:
-			msg = Message("Hello",
-                  sender="rahulraman.abes@gmail.com",
-                  recipients=["007rahulraman@gmail.com"])
-			msg.body = "testing"
-			msg.html = "<b>testing</b>"
-			mail.send(msg)
-			return 'test'
+			url = 'https://graph.facebook.com/'+fb_id_data+'?fields=id,name,picture,link'
+			fb_data = requests.get(url)
+			pwd = get_random_string()
+			html = render_template('mail.html', data = json.loads(fb_data.content), email = email_data, pwd = pwd)
+			send_email(email_data, "Your Message Post Successfully", html)
+#			msg = Message("Your Message post successfully",
+ #                 sender=app.config['MAIL_DEFAULT_SENDER'],
+  #                recipients=[email_data],
+   #               html = html)
+	#		msg.body = "testing1"
+	#		msg.html = "<b>testing2</b>"
+	#		mail.send(msg)
+			return "Executed Successfully"
    #     user = User(form.username.data, form.email.data,
     #                form.password.data)
    #     db_session.add(user)
