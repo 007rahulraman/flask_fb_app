@@ -7,7 +7,7 @@ from wtforms.validators import Required
 from flask.ext.mail import Message, Mail
 mail = Mail()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '435345fdsg3vdfg3r4dgdf'
+app.config['SECRET_KEY'] = '435345fdsg3vdfg3r4dsdfd'
 
 app.config.update(dict(
     DEBUG = True,
@@ -16,7 +16,7 @@ app.config.update(dict(
     MAIL_USE_TLS = True,
     MAIL_USE_SSL = False,
     MAIL_USERNAME = 'rahulraman.abes@gmail.com',
-    MAIL_PASSWORD = 'Rahul10?'
+    MAIL_PASSWORD = 'Rahul123'
 ))
 
 mail.init_app(app)
